@@ -5,7 +5,7 @@
 
 如果要获取的 bean 还没有在单例表中，则从父容器中去找，如果父容器也没有，则沿着当前容器的继承体系一直向上查找，找到了就直接获取
 
-否则说明 bean 还没有创建，先确保当前 bean 依赖的所有已经被初始化，根据不同的模式（单例/原型/其他）创建一个新的 bean 并返回
+否则说明 bean 还没有创建，先确保当前 bean 依赖的其他 bean 所有已经被初始化，根据不同的模式（单例/原型/其他）创建一个新的 bean 并返回
 
 实际上是走 AbstractAutowireCapableBeanFactory 类中的 createBean() 方法 -> doCreateBean() 方法
 
