@@ -11,11 +11,11 @@
 
 bean 优先使用容器的自动装配方法进行实例化，再选择走（有参/无参构造方法），默认走 JDK 的反射流程，也可以通过配置改用 Cglib 的流程 
 
-bean 实例化后和 di 注入过程中有多处位置调用了调用 PostProcessor 后置处理器，可以做一些增强
+bean 实例化后和 di 注入过程中有多处位置调用了 PostProcessor 后置处理器，可以做一些增强
  
 在 di 注入之前会先缓存单例模式的半初始化 bean 对象，以防循环引用
 
-获取解析 XML 文件中 bean 元素生成的 PropertyValues 元素值：依赖注入开始，首先处理 autowire 自动装配的注入，最后通过 applyPropertyValues() 方法注入最终值
+获取解析好的 XML 文件中 bean 元素对应的 PropertyValues 元素值：依赖注入开始，首先处理 autowire 自动装配的注入，最后通过 applyPropertyValues() 方法注入最终值
 
 di 注入完成的 bean 会注册记录下来
 
