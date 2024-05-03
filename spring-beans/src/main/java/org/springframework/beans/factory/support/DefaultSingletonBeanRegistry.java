@@ -151,12 +151,18 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	 * @param beanName the name of the bean
 	 * @param singletonFactory the factory for the singleton object
 	 */
+
+	// 三级缓存具体实现方法
 	protected void addSingletonFactory(String beanName, ObjectFactory<?> singletonFactory) {
 		Assert.notNull(singletonFactory, "Singleton factory must not be null");
 		synchronized (this.singletonObjects) {
+			// 如果一级缓存中不存在这个名称为 beanName 的 bean
 			if (!this.singletonObjects.containsKey(beanName)) {
+				// 放入三级缓存中
 				this.singletonFactories.put(beanName, singletonFactory);
+				// 把二级缓存中叫 beanName 的半成品 bean删除
 				this.earlySingletonObjects.remove(beanName);
+				// 标记当前注册的 bean
 				this.registeredSingletons.add(beanName);
 			}
 		}
@@ -179,20 +185,27 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 	@Nullable
 	protected Object getSingleton(String beanName, boolean allowEarlyReference) {
 		// Quick check for existing instance without full singleton lock
+		// 一级缓存中是否存在
 		Object singletonObject = this.singletonObjects.get(beanName);
+		// 如果想要获取的 bean 正在创建中且无一级缓存
 		if (singletonObject == null && isSingletonCurrentlyInCreation(beanName)) {
+			// 尝试二级缓存
 			singletonObject = this.earlySingletonObjects.get(beanName);
 			if (singletonObject == null && allowEarlyReference) {
 				synchronized (this.singletonObjects) {
 					// Consistent creation of early reference within full singleton lock
+					// 获取二级缓存
 					singletonObject = this.singletonObjects.get(beanName);
 					if (singletonObject == null) {
+						// 获取三级缓存
 						singletonObject = this.earlySingletonObjects.get(beanName);
 						if (singletonObject == null) {
 							ObjectFactory<?> singletonFactory = this.singletonFactories.get(beanName);
 							if (singletonFactory != null) {
 								singletonObject = singletonFactory.getObject();
+								// 放入二级缓存中
 								this.earlySingletonObjects.put(beanName, singletonObject);
+								// 移除三级缓存
 								this.singletonFactories.remove(beanName);
 							}
 						}
@@ -200,6 +213,7 @@ public class DefaultSingletonBeanRegistry extends SimpleAliasRegistry implements
 				}
 			}
 		}
+		// 返回完整对象或者还未初始化的对象
 		return singletonObject;
 	}
 
