@@ -45,6 +45,8 @@ import org.springframework.lang.Nullable;
  * @since 2.0.3
  */
 @SuppressWarnings("serial")
+
+// 这是拦截器链的生成工厂
 public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializable {
 
 	@Override
@@ -54,8 +56,12 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 		// This is somewhat tricky... We have to process introductions first,
 		// but we need to preserve order in the ultimate list.
 		AdvisorAdapterRegistry registry = GlobalAdvisorAdapterRegistry.getInstance();
+
+		// Advisor 链已经在传进来的 config 中持有了，这里可以直接使用
+		// Advisor 中持有切面 Pointcut 和增强行为 Advice 两个重要属性
 		Advisor[] advisors = config.getAdvisors();
 		List<Object> interceptorList = new ArrayList<>(advisors.length);
+
 		Class<?> actualClass = (targetClass != null ? targetClass : method.getDeclaringClass());
 		Boolean hasIntroductions = null;
 
@@ -64,6 +70,8 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 				// Add it conditionally.
 				PointcutAdvisor pointcutAdvisor = (PointcutAdvisor) advisor;
 				if (config.isPreFiltered() || pointcutAdvisor.getPointcut().getClassFilter().matches(actualClass)) {
+
+					// 从 pointcutAdvisor 中获取切面的方法匹配器
 					MethodMatcher mm = pointcutAdvisor.getPointcut().getMethodMatcher();
 					boolean match;
 					if (mm instanceof IntroductionAwareMethodMatcher) {
@@ -75,6 +83,7 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 					else {
 						match = mm.matches(method, actualClass);
 					}
+					// 使用 MethodMatchers 的 matches() 方法对目标类的目标方法进行匹配判断
 					if (match) {
 						MethodInterceptor[] interceptors = registry.getInterceptors(advisor);
 						if (mm.isRuntime()) {
@@ -98,11 +107,13 @@ public class DefaultAdvisorChainFactory implements AdvisorChainFactory, Serializ
 				}
 			}
 			else {
+				// 注意 getInterceptors() 是 advice 织入实现的入口
 				Interceptor[] interceptors = registry.getInterceptors(advisor);
 				interceptorList.addAll(Arrays.asList(interceptors));
 			}
 		}
 
+		// 返回拦截器链
 		return interceptorList;
 	}
 

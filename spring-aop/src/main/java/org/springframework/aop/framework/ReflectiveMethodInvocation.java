@@ -159,24 +159,37 @@ public class ReflectiveMethodInvocation implements ProxyMethodInvocation, Clonea
 	@Nullable
 	public Object proceed() throws Throwable {
 		// We start with an index of -1 and increment early.
+
+		// 从拦截器链中按顺序依次调用拦截器，直到所有的拦截器调用完毕，开始调用目标方法，对目标方法的调用
 		if (this.currentInterceptorIndex == this.interceptorsAndDynamicMethodMatchers.size() - 1) {
+
+			// invokeJoinpoint() 直接通过 AopUtils 进行目标方法的调用
 			return invokeJoinpoint();
 		}
 
+		// 沿着定义好的 interceptorsAndDynamicMethodMatchers 拦截器链进行处理
 		Object interceptorOrInterceptionAdvice =
 				this.interceptorsAndDynamicMethodMatchers.get(++this.currentInterceptorIndex);
 		if (interceptorOrInterceptionAdvice instanceof InterceptorAndDynamicMethodMatcher) {
 			// Evaluate dynamic method matcher here: static part will already have
 			// been evaluated and found to match.
+
+			// 这里通过拦截器的方法匹配器 methodMatcher 进行方法匹配
+			// 如果目标类的目标方法和配置的 Pointcut 匹配，那么这个 增强行为 advice 将会被执行
+			// Pointcut 定义了切面方法（要进行增强的方法），advice 定义了增强的行为
 			InterceptorAndDynamicMethodMatcher dm =
 					(InterceptorAndDynamicMethodMatcher) interceptorOrInterceptionAdvice;
 			Class<?> targetClass = (this.targetClass != null ? this.targetClass : this.method.getDeclaringClass());
 			if (dm.methodMatcher.matches(this.method, targetClass, this.arguments)) {
+
+				// 执行当前这个 拦截器 interceptor 的增强方法
 				return dm.interceptor.invoke(this);
 			}
 			else {
 				// Dynamic matching failed.
 				// Skip this interceptor and invoke the next in the chain.
+
+				// 如果不匹配，那么 process() 方法会被递归调用，直到所有的拦截器都被运行过为止
 				return proceed();
 			}
 		}
@@ -194,6 +207,8 @@ public class ReflectiveMethodInvocation implements ProxyMethodInvocation, Clonea
 	 * @throws Throwable if invoking the joinpoint resulted in an exception
 	 */
 	@Nullable
+
+	// 实际上调用了 AopUtils.invokeJoinpointUsingReflection()
 	protected Object invokeJoinpoint() throws Throwable {
 		return AopUtils.invokeJoinpointUsingReflection(this.target, this.method, this.arguments);
 	}

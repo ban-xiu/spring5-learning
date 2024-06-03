@@ -40,6 +40,8 @@ public interface MethodBeforeAdvice extends BeforeAdvice {
 	 * allowed by the method signature. Otherwise the exception
 	 * will be wrapped as a runtime exception.
 	 */
+
+	// 目标方法 method 开始执行前，AOP 会回调此方法
 	void before(Method method, Object[] args, @Nullable Object target) throws Throwable;
 
 }
