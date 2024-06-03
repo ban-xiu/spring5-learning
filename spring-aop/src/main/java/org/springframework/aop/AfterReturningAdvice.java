@@ -42,7 +42,7 @@ public interface AfterReturningAdvice extends AfterAdvice {
 	 * will be wrapped as a runtime exception.
 	 */
 
-	// 目标方法 method 执行后，AOP 会回调此方法，注意，它还传入了 method 的返回值
+	// 目标方法 method 执行后，aop 会回调此方法，注意，它还传入了 method 的返回值
 	void afterReturning(@Nullable Object returnValue, Method method, Object[] args, @Nullable Object target) throws Throwable;
 
 }

@@ -55,8 +55,8 @@ public class MethodBeforeAdviceInterceptor implements MethodInterceptor, BeforeA
 	@Nullable
 	public Object invoke(MethodInvocation mi) throws Throwable {
 
-		// 首先触发了 advice对象 的 before()方法 的回调
-		// 然后才是 MethodInvocation 的 process()方法回调
+		// 首先触发了 advice 对象的 before() 方法的回调
+		// 然后才是 MethodInvocation 的 process() 方法回调
 		this.advice.before(mi.getMethod(), mi.getArguments(), mi.getThis());
 		return mi.proceed();
 	}

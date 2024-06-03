@@ -19,3 +19,11 @@ ProxyFactoryBean 的 getObject() 方法先对通知器链进行了初始化，�
 - 生成代理对象（以单例为例）：如果目标类是接口，则使用 JDK 动态代理，否则使用 CGLIB 生成 AopProxy 代理对象
 - 以 JDK 动态代理为例：JdkDynamicAopProxy implements AopProxy, InvocationHandler，这个类重写了 invoke() 方法，如果有拦截器链，则需要先调用拦截器链中的拦截器，再调用目标的对应方法
 - 具体来说是走 ReflectiveMethodInvocation.proceed() 方法：通过 methodMatcher 和 Pointcut 做匹配，执行增强方法和原本方法
+
+例子：要对普通对象 A 进行 aop 操作
+
+- 先生成 A 的代理对象 AProxy 
+- AProxy.target = A
+- 在 AProxy 要中增强的方法中执行增强方法和 target 的原本方法
+- 把 AProxy 放入单例池
+- A 存在于 JVM 中而未放入单例池，因为被 AProxy 所引用，所以不会被回收
