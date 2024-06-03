@@ -335,11 +335,15 @@ public abstract class AopUtils {
 	 * @throws org.springframework.aop.AopInvocationException in case of a reflection error
 	 */
 	@Nullable
+
+	// 使用反射机制，调用目标方法 method 的 invoke 方法
 	public static Object invokeJoinpointUsingReflection(@Nullable Object target, Method method, Object[] args)
 			throws Throwable {
 
 		// Use reflection to invoke the method.
 		try {
+
+			// 最后利用反射完成调用
 			ReflectionUtils.makeAccessible(method);
 			return method.invoke(target, args);
 		}

@@ -36,6 +36,8 @@ import org.springframework.lang.Nullable;
  * @see #setAdvice
  */
 @SuppressWarnings("serial")
+
+// 将 Pointcut 和 Advice 有效地结合在一起
 public class DefaultPointcutAdvisor extends AbstractGenericPointcutAdvisor implements Serializable {
 
 	private Pointcut pointcut = Pointcut.TRUE;
@@ -63,6 +65,8 @@ public class DefaultPointcutAdvisor extends AbstractGenericPointcutAdvisor imple
 	 * @param pointcut the Pointcut targeting the Advice
 	 * @param advice the Advice to run when Pointcut matches
 	 */
+
+	// 注入了 Pointcut 和 Advice
 	public DefaultPointcutAdvisor(Pointcut pointcut, Advice advice) {
 		this.pointcut = pointcut;
 		setAdvice(advice);

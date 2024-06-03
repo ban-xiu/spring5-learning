@@ -43,6 +43,8 @@ public class JdkRegexpMethodPointcut extends AbstractRegexpMethodPointcut {
 	/**
 	 * Compiled form of the patterns.
 	 */
+
+	// 通过正则表达式对方法名进行匹配
 	private Pattern[] compiledPatterns = new Pattern[0];
 
 	/**
@@ -71,6 +73,8 @@ public class JdkRegexpMethodPointcut extends AbstractRegexpMethodPointcut {
 	 * Returns {@code true} if the {@link Pattern} at index {@code patternIndex}
 	 * matches the supplied candidate {@code String}.
 	 */
+
+	// 通过正则表达式对方法名进行匹配
 	@Override
 	protected boolean matches(String pattern, int patternIndex) {
 		Matcher matcher = this.compiledPatterns[patternIndex].matcher(pattern);
